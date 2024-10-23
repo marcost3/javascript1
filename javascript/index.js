@@ -24,76 +24,103 @@ function analizarNumero() {
 function convertirHorasAMinutos(duracion) {
     const [horas, minutos] = duracion.split(":").map(Number);
     return horas * 60 + minutos;
+}
+
+function validarHorario(horario) {
+    const [horas, minutos] = horario.split(":").map(Number);
+  
+    if (isNaN(horas) || isNaN(minutos)) {
+      return false; 
+    }
+  
+    if (horas < 0 || horas > 24) {
+      return false;
+    }
+  
+    if (minutos < 0 || minutos >= 60) {
+      return false;
+    }
+
+    if (horas === 24 && minutos !== 0) {
+      return false;
+    }
+  
+    return true;
   }
   
-  const tiposLavados = [
-    { nombre: "Combo Corsa", duracion: "1:30", minutos: convertirHorasAMinutos("1:30") },
-    { nombre: "Combo Cronos", duracion: "2:00", minutos: convertirHorasAMinutos("2:00") },
-    { nombre: "Combo Lambo", duracion: "4:00", minutos: convertirHorasAMinutos("4:00") }
-  ];
+
+const tiposLavados = [
+  { nombre: "Combo Corsa", duracion: "1:30", minutos: convertirHorasAMinutos("1:30") },
+  { nombre: "Combo Cronos", duracion: "2:00", minutos: convertirHorasAMinutos("2:00") },
+  { nombre: "Combo Lambo", duracion: "4:00", minutos: convertirHorasAMinutos("4:00") }
+];
+
+let pedidos = [];
+
+function ingresarPedidos() {
+  let continuar = true;
   
-  let pedidos = [];
+  while (continuar) {
+    let modelo = prompt("Ingrese el modelo del auto:");
+    let patente = prompt("Ingrese la patente del auto (formato ABC123 o AB123CD):");
+    let tipoLavado = parseInt(prompt("Ingrese el tipo de lavado (1: Combo Corsa, 2: Combo Cronos, 3: Combo Lambo):"));
+    let horaDeseada;
+    do {
+        horaDeseada = prompt("Ingresa la hora deseada para el pedido (HH:MM):");
+        if (!validarHorario(horaDeseada)) {
+          console.log("El horario no es válido. Debe estar entre 00:00 y 24:00.");
+        }
+      } while (!validarHorario(horaDeseada));
 
-  function ingresarPedidos() {
-    let continuar = true;
-    
-    while (continuar) {
-      let modelo = prompt("Ingresa el modelo del auto:");
-      let patente = prompt("Ingresa la patente del auto:");
-      let tipoLavado = parseInt(prompt("Ingresa el tipo de lavado (1: Combo Corsa, 2: Combo Cronos, 3: Combo Lambo):"));
-      let horaDeseada = prompt("Ingresa la hora deseada para el pedido (HH:MM):");
-
-      if (tipoLavado >= 1 && tipoLavado <= 3) {
-        let lavadoSeleccionado = tiposLavados[tipoLavado - 1];
-        
-        // Crear objeto del pedido
-        let pedido = {
-          modelo,
-          patente,
-          tipoLavado: lavadoSeleccionado.nombre,
-          duracion: lavadoSeleccionado.duracion,
-          minutosDuracion: lavadoSeleccionado.minutos,
-          horaDeseada
-        };
-        
-        pedidos.push(pedido);
-      } else {
-        console.log("Tipo de lavado inválido. Por favor, inténtalo de nuevo.");
-      }
+    if (tipoLavado >= 1 && tipoLavado <= 3) {
+      let lavadoSeleccionado = tiposLavados[tipoLavado - 1];
       
-      continuar = prompt("¿Deseas ingresar otro pedido? (si/no)") === "si";
+      let pedido = {
+        modelo,
+        patente,
+        tipoLavado: lavadoSeleccionado.nombre,
+        duracion: lavadoSeleccionado.duracion,
+        minutosDuracion: lavadoSeleccionado.minutos,
+        horaDeseada
+      };
+      
+      pedidos.push(pedido);
+    } else {
+      console.log("Tipo de lavado inválido. Por favor, inténtalo de nuevo.");
     }
+    continuar = prompt("¿Deseas ingresar otro pedido? (si/no)") === "si";
+  }
+}
+
+function analizarPedidos() {
+  if (pedidos.length === 0) {
+    console.log("No hay pedidos ingresados.");
+    return;
   }
   
-  function analizarPedidos() {
-    if (pedidos.length === 0) {
-      console.log("No hay pedidos ingresados.");
-      return;
-    }
-    
-    let cantidadLavados = tiposLavados.map(lavado => ({
-      nombre: lavado.nombre,
-      cantidad: pedidos.filter(pedido => pedido.tipoLavado === lavado.nombre).length
-    }));
-    
-    let pedidoMasLargo = pedidos.reduce((max, pedido) => (pedido.minutosDuracion > max.minutosDuracion ? pedido : max));
-    let pedidoMasCorto = pedidos.reduce((min, pedido) => (pedido.minutosDuracion < min.minutosDuracion ? pedido : min));
-    
-    console.log("Cantidad de cada tipo de lavado:");
-    cantidadLavados.forEach(lavado => {
-      console.log(`${lavado.nombre}: ${lavado.cantidad}`);
-    });
-    
-    console.log(`\nPedido más largo: ${pedidoMasLargo.tipoLavado}, Duración: ${pedidoMasLargo.duracion}, Hora: ${pedidoMasLargo.horaDeseada}`);
-    console.log(`Pedido más corto: ${pedidoMasCorto.tipoLavado}, Duración: ${pedidoMasCorto.duracion}, Hora: ${pedidoMasCorto.horaDeseada}`);
-    
-    console.log("\nPedidos detallados:");
-    pedidos.forEach(pedido => {
-      console.log(`Modelo: ${pedido.modelo}, Patente: ${pedido.patente}, Lavado: ${pedido.tipoLavado}, Hora: ${pedido.horaDeseada}`);
-    });
-  }
+  let cantidadLavados = tiposLavados.map(lavado => ({
+    nombre: lavado.nombre,
+    cantidad: pedidos.filter(pedido => pedido.tipoLavado === lavado.nombre).length
+  }));
   
-  // Inicia las funciones
-  ingresarPedidos();
-  analizarPedidos();
+  let pedidoMasLargo = pedidos.reduce((max, pedido) => (pedido.minutosDuracion > max.minutosDuracion ? pedido : max));
+  let pedidoMasCorto = pedidos.reduce((min, pedido) => (pedido.minutosDuracion < min.minutosDuracion ? pedido : min));
+  
+  console.log("Cantidad de cada tipo de lavado:");
+  cantidadLavados.forEach(lavado => {
+    console.log(`${lavado.nombre}: ${lavado.cantidad}`);
+  });
+  
+  console.log(`\nPedido más largo: ${pedidoMasLargo.tipoLavado}, Duración: ${pedidoMasLargo.duracion}, Hora: ${pedidoMasLargo.horaDeseada}`);
+  console.log(`Pedido más corto: ${pedidoMasCorto.tipoLavado}, Duración: ${pedidoMasCorto.duracion}, Hora: ${pedidoMasCorto.horaDeseada}`);
+  
+  console.log("\nPedidos detallados:");
+  pedidos.forEach(pedido => {
+    console.log(`Modelo: ${pedido.modelo}, Patente: ${pedido.patente}, Lavado: ${pedido.tipoLavado}, Hora: ${pedido.horaDeseada}`);
+  });
+}
+
+// Inicia las funciones
+ingresarPedidos();
+analizarPedidos();
   
