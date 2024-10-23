@@ -27,27 +27,51 @@ function convertirHorasAMinutos(duracion) {
 }
 
 function validarHorario(horario) {
-    const [horas, minutos] = horario.split(":").map(Number);
-  
-    if (isNaN(horas) || isNaN(minutos)) {
-      return false; 
-    }
-  
-    if (horas < 0 || horas > 24) {
-      return false;
-    }
-  
-    if (minutos < 0 || minutos >= 60) {
-      return false;
-    }
+  const [horas, minutos] = horario.split(":").map(Number);
 
-    if (horas === 24 && minutos !== 0) {
-      return false;
-    }
-  
-    return true;
+  if (isNaN(horas) || isNaN(minutos)) {
+    return false; 
   }
-  
+
+  if (horas < 0 || horas > 24) {
+    return false;
+  }
+
+  if (minutos < 0 || minutos >= 60) {
+    return false;
+  }
+
+  if (horas === 24 && minutos !== 0) {
+    return false;
+  }
+
+  return true;
+}
+
+function sumarDuracion(horarioInicio, duracionLavado) {
+
+  let [horasInicio, minutosInicio] = horarioInicio.split(":").map(Number);
+
+  let [horasDuracion, minutosDuracion] = duracionLavado.split(":").map(Number);
+
+  let horasFinalizacion = horasInicio + horasDuracion;
+  let minutosFinalizacion = minutosInicio + minutosDuracion;
+
+  if (minutosFinalizacion >= 60) {
+    minutosFinalizacion -= 60;
+    horasFinalizacion += 1;
+  }
+
+  if (horasFinalizacion >= 24) {
+    horasFinalizacion -= 24;
+  }
+
+  let horasFinal = horasFinalizacion.toString().padStart(2, "0");
+  let minutosFinal = minutosFinalizacion.toString().padStart(2, "0");
+
+  return `${horasFinal}:${minutosFinal}`;
+}
+
 
 const tiposLavados = [
   { nombre: "Combo Corsa", duracion: "1:30", minutos: convertirHorasAMinutos("1:30") },
@@ -81,7 +105,8 @@ function ingresarPedidos() {
         tipoLavado: lavadoSeleccionado.nombre,
         duracion: lavadoSeleccionado.duracion,
         minutosDuracion: lavadoSeleccionado.minutos,
-        horaDeseada
+        horaDeseada,
+        horaFinalizacion: sumarDuracion(horaDeseada, lavadoSeleccionado.duracion)
       };
       
       pedidos.push(pedido);
@@ -111,8 +136,8 @@ function analizarPedidos() {
     console.log(`${lavado.nombre}: ${lavado.cantidad}`);
   });
   
-  console.log(`\nPedido más largo: ${pedidoMasLargo.tipoLavado}, Duración: ${pedidoMasLargo.duracion}, Hora: ${pedidoMasLargo.horaDeseada}`);
-  console.log(`Pedido más corto: ${pedidoMasCorto.tipoLavado}, Duración: ${pedidoMasCorto.duracion}, Hora: ${pedidoMasCorto.horaDeseada}`);
+  console.log(`\nPedido más largo: ${pedidoMasLargo.tipoLavado}, Duración: ${pedidoMasLargo.duracion}, Hora inicio: ${pedidoMasLargo.horaDeseada}, Hora fin: ${pedidoMasLargo.horaFinalizacion}`);
+  console.log(`Pedido más corto: ${pedidoMasCorto.tipoLavado}, Duración: ${pedidoMasCorto.duracion}, Hora inicio: ${pedidoMasCorto.horaDeseada}, Hora fin: ${pedidoMasCorto.horaFinalizacion}`);
   
   console.log("\nPedidos detallados:");
   pedidos.forEach(pedido => {
