@@ -1,0 +1,19 @@
+.navbar {
+    background-color: $primary-color;
+
+    .navbar-brand {
+        color: $secondary-color;
+    }
+
+    .nav-link {
+        color: $secondary-color;
+
+        &:hover {
+            color: $accent-color;
+        }
+    }
+
+    @include responsive {
+        flex-direction:row;
+    }
+}

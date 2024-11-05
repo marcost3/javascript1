@@ -1,0 +1,10 @@
+.button {
+    background-color: $accent-color;
+    color: $secondary-color;
+    padding: .625rem 1.25rem;
+    border-radius: .3125rem;
+
+    &:hover {
+        background-color: darken($accent-color, 10%);
+    }
+}

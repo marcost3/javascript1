@@ -1,0 +1,10 @@
+@media (max-width: 48rem) {
+    .container {
+        padding: 0px 10px;
+    }
+
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

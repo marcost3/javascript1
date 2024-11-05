@@ -1,0 +1,16 @@
+header {
+    @include flex-center;
+    background: url(../assets/header.jpg) no-repeat center center;
+    background-size: cover;
+    height: 200px;
+    color: $secondary-color;
+    
+    h1 {
+        font-size: 2.5em;
+    }
+
+    @include responsive {
+        height: 150px;
+        text-align: center;
+    }
+}
