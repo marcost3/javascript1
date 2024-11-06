@@ -143,9 +143,4 @@ function analizarPedidos() {
   pedidos.forEach(pedido => {
     console.log(`Modelo: ${pedido.modelo}, Patente: ${pedido.patente}, Lavado: ${pedido.tipoLavado}, Hora: ${pedido.horaDeseada}`);
   });
-}
-
-// Inicia las funciones
-ingresarPedidos();
-analizarPedidos();
-  
+};
