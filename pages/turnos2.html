@@ -3,48 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="DetailGods - El mejor servicio de lavado de autos">
-    <meta name="keywords" content="Lavadero, Carwash, Lavado de autos">
-    <meta name="author" content="Marcos Turcis">
-    <meta name="copyright" content="DetailGods">
-    <meta property="og:title" content="Turnos - DetailGods">
-    <meta property="og:site_name" content="DetailGods">
-    <meta property="og:url" content="https://tubular-brigadeiros-3646b9.netlify.app">
-    <meta property="og:description" content="DetailGods - El mejor servicio de lavado de autos">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1550564956-8f914edc0477?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
     <title>Turnos - DetailGods</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div class="flex-grow-1">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">DetailGods</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Inicio </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../pages/servicios.html">Servicios</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Turnos<span class="sr-only">(actual)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../pages/abt_us.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../pages/contacto.html">Contacto</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
         <header class="bg-dark text-white text-center p-3">
             <h1>Car Wash - DetailGods</h1>
         </header>
@@ -55,7 +19,7 @@
                     <div class="col-md-6">
                         <form id="turnoForm">
                             <div class="form-group">
-                                <label for="Modelo">Modelo del vehiculo</label>
+                                <label for="modelo">Modelo del vehículo</label>
                                 <input type="text" class="form-control" id="modelo" required>
                             </div>
                             <div class="form-group">
@@ -67,11 +31,11 @@
                                 <input type="time" class="form-control" id="hora" required>
                             </div>
                             <div class="form-group">
-                                <label for="Patente">Patente</label>
+                                <label for="patente">Patente</label>
                                 <input type="text" class="form-control" id="patente" required>
                             </div>
                             <div class="form-group">
-                                <label for="Telefono">Telefono</label>
+                                <label for="telefono">Teléfono</label>
                                 <input type="text" class="form-control" id="telefono" required>
                             </div>
                             <div class="form-group">
@@ -82,13 +46,34 @@
                                     <option value="lambo">Combo Lambo - 4 hs</option>
                                 </select>
                             </div>
-                            <input type="reset" value="Borrar informacion" class="btn btn-dark">
                             <button type="submit" class="btn btn-dark btn-block mt-3">Reservar Turno</button>
                         </form>
                         <div id="turnoConfirmacion" class="alert alert-success mt-4 d-none" role="alert">
                             ¡Turno reservado con éxito!
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section class="mt-5">
+                <h3 class="text-center">Agenda de Turnos</h3>
+                <div class="table-responsive">
+                    <table id="agendaTurnos" class="table table-bordered table-striped mt-3">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Patente</th>
+                                <th>Teléfono</th>
+                                <th>Fecha</th>
+                                <th>Hora de Inicio</th>
+                                <th>Hora de Finalización</th>
+                                <th>Combo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se insertarán los turnos reservados mediante JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>
@@ -100,15 +85,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
-    <script src="../javascript/index.js"></script>
-
-    <script>
-        document.getElementById('turnoForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            document.getElementById('turnoConfirmacion').classList.remove('d-none');
-        });
-
-    </script>
+    <script src="../javascript/turnos.js"></script>
 </body>
 </html>
