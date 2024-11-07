@@ -4,23 +4,25 @@ const tiposLavados = [
   { nombre: "Combo Lambo", duracion: "4:00" }
 ];
 
-const pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 
 function sumarDuracion(horaInicio, duracion) {
   let [horasInicio, minutosInicio] = horaInicio.split(":").map(Number);
   let [horasDuracion, minutosDuracion] = duracion.split(":").map(Number);
   let horasFin = horasInicio + horasDuracion;
   let minutosFin = minutosInicio + minutosDuracion;
+
   if (minutosFin >= 60) {
       minutosFin -= 60;
       horasFin += 1;
   }
   if (horasFin >= 24) horasFin -= 24;
+
   return `${String(horasFin).padStart(2, "0")}:${String(minutosFin).padStart(2, "0")}`;
 }
 
 function agregarTurnoATabla(pedido) {
-  const agendaTurnos = document.getElementById("agendaTurnos").querySelector("tbody");
+  const agendaTurnos = document.querySelector("#agendaTurnos tbody");
   const fila = document.createElement("tr");
   fila.innerHTML = `
       <td>${pedido.modelo}</td>
@@ -34,13 +36,18 @@ function agregarTurnoATabla(pedido) {
   agendaTurnos.appendChild(fila);
 }
 
+
 function cargarTurnos() {
-  pedidos.forEach(agregarTurnoATabla);
+
+  const agendaTurnos = document.querySelector("#agendaTurnos tbody");
+  agendaTurnos.innerHTML = ""; 
+
+  pedidos.forEach(pedido => agregarTurnoATabla(pedido));
 }
 
 document.getElementById('turnoForm').addEventListener('submit', function(event) {
   event.preventDefault();
-  
+
   const modelo = document.getElementById('modelo').value;
   const patente = document.getElementById('patente').value;
   const telefono = document.getElementById('telefono').value;
@@ -72,5 +79,4 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
   this.reset();
 });
 
-// Cargar turnos existentes en la agenda al cargar la página
 document.addEventListener("DOMContentLoaded", cargarTurnos);
