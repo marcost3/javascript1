@@ -36,6 +36,32 @@ function analizarNumero(numero) {
   }
 }
 
+function convertirHoraEnMinutos(hora) {
+  const [horas, minutos] = hora.split(":").map(Number);
+  return horas * 60 + minutos;
+}
+
+function validarDisponibilidad(nuevoPedido) {
+  const nuevaFecha = nuevoPedido.fecha;
+  const nuevaHoraInicio = convertirHoraEnMinutos(nuevoPedido.hora);
+  const nuevaHoraFin = convertirHoraEnMinutos(nuevoPedido.horaFin);
+
+  for (let pedido of pedidos) {
+      if (pedido.fecha === nuevaFecha) {
+          const horaInicioExistente = convertirHoraEnMinutos(pedido.hora);
+          const horaFinExistente = convertirHoraEnMinutos(pedido.horaFin);
+
+          if (
+              (nuevaHoraInicio < horaFinExistente && nuevaHoraFin > horaInicioExistente)
+          ) {
+              return false;
+          }
+      }
+  }
+
+  return true;
+}
+
 
 function agregarTurnoATabla(pedido) {
   const agendaTurnos = document.querySelector("#agendaTurnos tbody");
@@ -51,7 +77,6 @@ function agregarTurnoATabla(pedido) {
   `;
   agendaTurnos.appendChild(fila);
 }
-
 
 function cargarTurnos() {
 
@@ -73,11 +98,7 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
   const combo = tiposLavados[comboIndex];
   const horaFin = sumarDuracion(hora, combo.duracion);
 
-  if (!analizarNumero(telefono)) {
-      return;
-  }
-
-  const pedido = {
+  const nuevoPedido = {
       modelo,
       patente,
       telefono,
@@ -87,7 +108,12 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
       horaFin
   };
 
-  pedidos.push(pedido);
+  if (!validarDisponibilidad(nuevoPedido)) {
+      alert("El horario seleccionado se superpone con otro turno ya reservado. Por favor, elige otro horario.");
+      return;
+  }
+
+  pedidos.push(nuevoPedido);
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
   document.getElementById('turnoConfirmacion').classList.remove('d-none');
@@ -95,6 +121,6 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
       document.getElementById('turnoConfirmacion').classList.add('d-none');
   }, 3000);
 
-  agregarTurnoATabla(pedido);
+  agregarTurnoATabla(nuevoPedido);
   this.reset();
 });
