@@ -21,6 +21,22 @@ function sumarDuracion(horaInicio, duracion) {
   return `${String(horasFin).padStart(2, "0")}:${String(minutosFin).padStart(2, "0")}`;
 }
 
+function analizarNumero(numero) {
+  const CANT_NUMEROS = 10;
+  
+  const numeroLimpio = numero.replace(/\D/g, '');
+
+  if (numeroLimpio.length === CANT_NUMEROS) {
+      console.log("El número telefónico es correcto.");
+      return true;
+  } else {
+      console.log(`El número telefónico es incorrecto. Se ingresaron ${numeroLimpio.length} dígitos.`);
+      alert(`El número telefónico es incorrecto. Se ingresaron ${numeroLimpio.length} dígitos.`);
+      return false;
+  }
+}
+
+
 function agregarTurnoATabla(pedido) {
   const agendaTurnos = document.querySelector("#agendaTurnos tbody");
   const fila = document.createElement("tr");
@@ -57,6 +73,10 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
   const combo = tiposLavados[comboIndex];
   const horaFin = sumarDuracion(hora, combo.duracion);
 
+  if (!analizarNumero(telefono)) {
+      return;
+  }
+
   const pedido = {
       modelo,
       patente,
@@ -78,5 +98,3 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
   agregarTurnoATabla(pedido);
   this.reset();
 });
-
-document.addEventListener("DOMContentLoaded", cargarTurnos);
