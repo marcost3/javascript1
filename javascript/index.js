@@ -108,6 +108,10 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
       horaFin
   };
 
+  if (!analizarNumero(nuevoPedido.telefono)) {
+    return;
+  }
+
   if (!validarDisponibilidad(nuevoPedido)) {
       alert("El horario seleccionado se superpone con otro turno ya reservado. Por favor, elige otro horario.");
       return;
