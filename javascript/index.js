@@ -4,89 +4,77 @@ const tiposLavados = [
   { nombre: "Combo Lambo", duracion: "4:00" }
 ];
 
-let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let pedidos = [];
 
-function sumarDuracion(horaInicio, duracion) {
-  let [horasInicio, minutosInicio] = horaInicio.split(":").map(Number);
-  let [horasDuracion, minutosDuracion] = duracion.split(":").map(Number);
-  let horasFin = horasInicio + horasDuracion;
-  let minutosFin = minutosInicio + minutosDuracion;
+fetch('../data/pedidos.json')
+  .then(response => response.json())
+  .then(data => {
+      pedidos = data;
+      cargarTurnos();
+  })
+  .catch(() => {
+      mostrarToast("Error cargando datos iniciales", "error");
+  });
 
-  if (minutosFin >= 60) {
-      minutosFin -= 60;
-      horasFin += 1;
-  }
-  if (horasFin >= 24) horasFin -= 24;
-
+const sumarDuracion = (horaInicio, duracion) => {
+  const [horasInicio, minutosInicio] = horaInicio.split(":").map(Number);
+  const [horasDuracion, minutosDuracion] = duracion.split(":").map(Number);
+  const horasFin = (horasInicio + horasDuracion + Math.floor((minutosInicio + minutosDuracion) / 60)) % 24;
+  const minutosFin = (minutosInicio + minutosDuracion) % 60;
   return `${String(horasFin).padStart(2, "0")}:${String(minutosFin).padStart(2, "0")}`;
-}
+};
 
-function analizarNumero(numero) {
-  const CANT_NUMEROS = 10;
-  
+const analizarNumero = numero => {
   const numeroLimpio = numero.replace(/\D/g, '');
-
-  if (numeroLimpio.length === CANT_NUMEROS) {
-      console.log("El número telefónico es correcto.");
-      return true;
-  } else {
-      console.log(`El número telefónico es incorrecto. Se ingresaron ${numeroLimpio.length} dígitos.`);
-      alert(`El número telefónico es incorrecto. Se ingresaron ${numeroLimpio.length} dígitos.`);
-      return false;
+  const valido = numeroLimpio.length === 10;
+  if (!valido) {
+      Swal.fire("Número incorrecto", `Se ingresaron ${numeroLimpio.length} dígitos`, "error");
   }
-}
+  return valido;
+};
 
-function convertirHoraEnMinutos(hora) {
-  const [horas, minutos] = hora.split(":").map(Number);
-  return horas * 60 + minutos;
-}
-
-function validarDisponibilidad(nuevoPedido) {
-  const nuevaFecha = nuevoPedido.fecha;
+const validarDisponibilidad = nuevoPedido => {
   const nuevaHoraInicio = convertirHoraEnMinutos(nuevoPedido.hora);
   const nuevaHoraFin = convertirHoraEnMinutos(nuevoPedido.horaFin);
 
-  for (let pedido of pedidos) {
-      if (pedido.fecha === nuevaFecha) {
-          const horaInicioExistente = convertirHoraEnMinutos(pedido.hora);
-          const horaFinExistente = convertirHoraEnMinutos(pedido.horaFin);
+  return !pedidos.some(pedido =>
+      pedido.fecha === nuevoPedido.fecha &&
+      nuevaHoraInicio < convertirHoraEnMinutos(pedido.horaFin) &&
+      nuevaHoraFin > convertirHoraEnMinutos(pedido.hora)
+  );
+};
 
-          if (
-              (nuevaHoraInicio < horaFinExistente && nuevaHoraFin > horaInicioExistente)
-          ) {
-              return false;
-          }
-      }
-  }
+const convertirHoraEnMinutos = hora => {
+  const [horas, minutos] = hora.split(":").map(Number);
+  return horas * 60 + minutos;
+};
 
-  return true;
-}
+const mostrarToast = (mensaje, tipo = "success") => {
+  Toastify({
+      text: mensaje,
+      duration: 3000,
+      gravity: "top",
+      position: "center",
+      style: { background: tipo === "success" ? "green" : "red" }
+  }).showToast();
+};
 
+const cargarTurnos = () => {
+  const tbody = document.querySelector("#agendaTurnos tbody");
+  tbody.innerHTML = pedidos.map(pedido => `
+      <tr>
+          <td>${pedido.modelo}</td>
+          <td>${pedido.patente}</td>
+          <td>${pedido.telefono}</td>
+          <td>${pedido.fecha}</td>
+          <td>${pedido.hora}</td>
+          <td>${pedido.horaFin}</td>
+          <td>${pedido.combo}</td>
+      </tr>
+  `).join("");
+};
 
-function agregarTurnoATabla(pedido) {
-  const agendaTurnos = document.querySelector("#agendaTurnos tbody");
-  const fila = document.createElement("tr");
-  fila.innerHTML = `
-      <td>${pedido.modelo}</td>
-      <td>${pedido.patente}</td>
-      <td>${pedido.telefono}</td>
-      <td>${pedido.fecha}</td>
-      <td>${pedido.hora}</td>
-      <td>${pedido.horaFin}</td>
-      <td>${pedido.combo}</td>
-  `;
-  agendaTurnos.appendChild(fila);
-}
-
-function cargarTurnos() {
-
-  const agendaTurnos = document.querySelector("#agendaTurnos tbody");
-  agendaTurnos.innerHTML = ""; 
-
-  pedidos.forEach(pedido => agregarTurnoATabla(pedido));
-}
-
-document.getElementById('turnoForm').addEventListener('submit', function(event) {
+document.getElementById('turnoForm').addEventListener('submit', function (event) {
   event.preventDefault();
 
   const modelo = document.getElementById('modelo').value;
@@ -98,33 +86,18 @@ document.getElementById('turnoForm').addEventListener('submit', function(event) 
   const combo = tiposLavados[comboIndex];
   const horaFin = sumarDuracion(hora, combo.duracion);
 
-  const nuevoPedido = {
-      modelo,
-      patente,
-      telefono,
-      fecha,
-      hora,
-      combo: combo.nombre,
-      horaFin
-  };
+  const nuevoPedido = { modelo, patente, telefono, fecha, hora, combo: combo.nombre, horaFin };
 
-  if (!analizarNumero(nuevoPedido.telefono)) {
-    return;
-  }
+  if (!analizarNumero(nuevoPedido.telefono)) return;
 
   if (!validarDisponibilidad(nuevoPedido)) {
-      alert("El horario seleccionado se superpone con otro turno ya reservado. Por favor, elige otro horario.");
+      Swal.fire("Horario ocupado", "Por favor elige otro horario.", "warning");
       return;
   }
 
   pedidos.push(nuevoPedido);
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
-
-  document.getElementById('turnoConfirmacion').classList.remove('d-none');
-  setTimeout(() => {
-      document.getElementById('turnoConfirmacion').classList.add('d-none');
-  }, 3000);
-
-  agregarTurnoATabla(nuevoPedido);
+  cargarTurnos();
+  mostrarToast("Turno reservado con éxito");
   this.reset();
 });
