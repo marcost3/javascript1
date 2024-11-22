@@ -1,0 +1,11 @@
+[
+    {
+        "modelo": "Toyota Corolla",
+        "patente": "ABC123",
+        "telefono": "1234567890",
+        "fecha": "2024-11-25",
+        "hora": "10:00",
+        "horaFin": "11:30",
+        "combo": "Combo Corsa"
+    }
+]
