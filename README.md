@@ -7,3 +7,5 @@ El proyecto creado se basa en el entorno de un lavadero de autos:
     Finalmente muestra todos los pedidos ingresados, discriminados por su modelo, patente, tipo de lavado, y horario deseado.
 
   -Tercera entrega: se modifico la pagina de Turnos del sitio web DetailGods, se modifico de manera que sea 100% dinamica. En los agregados se tuvo en cuenta la validacion del ingreso de cada turno, se valida cada item del turno ingresado con el fin de que el turno este correcto, que ningun turno se superponga con otro turno ingresado y que se guarde cada turno en la agenda (tipo lista, discriminando cada item).
+
+  -Entrega final: se adapto la totalidad del sitio con el fin de ofrecer una experiencia mas eficiente y comoda para el ususario, agregando dinamismo al sitio y implementando todo lo aprendido durante la cursada de la materia Javascript.
