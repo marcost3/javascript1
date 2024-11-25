@@ -99,5 +99,5 @@ document.getElementById('turnoForm').addEventListener('submit', function (event)
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
   cargarTurnos();
   mostrarToast("Turno reservado con éxito");
-  this.reset();
+  this.reset();  // Reset de turnos (borrar si se quiere guardar los turnos)
 });
